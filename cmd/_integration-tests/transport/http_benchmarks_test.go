@@ -16,11 +16,11 @@ import (
 	// 3d Party
 	"context"
 
-	pb "github.com/TuneLab/truss/cmd/_integration-tests/transport/transportpermutations-service"
-	httpclient "github.com/TuneLab/truss/cmd/_integration-tests/transport/transportpermutations-service/svc/client/http"
+	pb "github.com/eriktate/truss/cmd/_integration-tests/transport/transportpermutations-service"
+	httpclient "github.com/eriktate/truss/cmd/_integration-tests/transport/transportpermutations-service/svc/client/http"
 
-	"github.com/TuneLab/truss/cmd/_integration-tests/transport/transportpermutations-service/handlers"
-	"github.com/TuneLab/truss/cmd/_integration-tests/transport/transportpermutations-service/svc"
+	"github.com/eriktate/truss/cmd/_integration-tests/transport/transportpermutations-service/handlers"
+	"github.com/eriktate/truss/cmd/_integration-tests/transport/transportpermutations-service/svc"
 
 	httptransport "github.com/go-kit/kit/transport/http"
 )

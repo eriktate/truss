@@ -15,24 +15,25 @@ import (
 	"github.com/pkg/errors"
 	flag "github.com/spf13/pflag"
 
-	"github.com/TuneLab/truss/truss"
-	"github.com/TuneLab/truss/truss/execprotoc"
-	"github.com/TuneLab/truss/truss/getstarted"
-	"github.com/TuneLab/truss/truss/parsesvcname"
+	"github.com/eriktate/truss/truss"
+	"github.com/eriktate/truss/truss/execprotoc"
+	"github.com/eriktate/truss/truss/getstarted"
+	"github.com/eriktate/truss/truss/parsesvcname"
 
-	"github.com/TuneLab/truss/deftree"
-	"github.com/TuneLab/truss/gendoc"
-	ggkconf "github.com/TuneLab/truss/gengokit"
-	gengokit "github.com/TuneLab/truss/gengokit/generator"
-	"github.com/TuneLab/truss/svcdef"
+	"github.com/eriktate/truss/deftree"
+	"github.com/eriktate/truss/gendoc"
+	ggkconf "github.com/eriktate/truss/gengokit"
+	gengokit "github.com/eriktate/truss/gengokit/generator"
+	"github.com/eriktate/truss/svcdef"
 )
 
 var (
-	pbPackageFlag  = flag.String("pbout", "", "Go package path where the protoc-gen-go .pb.go files will be written")
-	svcPackageFlag = flag.String("svcout", "", "Go package path where the generated Go service will be written. Trailing slash will create a NAME-service directory")
-	verboseFlag    = flag.BoolP("verbose", "v", false, "Verbose output")
-	helpFlag       = flag.BoolP("help", "h", false, "Print usage")
-	getStartedFlag = flag.BoolP("getstarted", "", false, "Output a 'getstarted.proto' protobuf file in ./")
+	pbPackageFlag    = flag.String("pbout", "", "Go package path where the protoc-gen-go .pb.go files will be written")
+	svcPackageFlag   = flag.String("svcout", "", "Go package path where the generated Go service will be written. Trailing slash will create a NAME-service directory")
+	verboseFlag      = flag.BoolP("verbose", "v", false, "Verbose output")
+	helpFlag         = flag.BoolP("help", "h", false, "Print usage")
+	getStartedFlag   = flag.BoolP("getstarted", "", false, "Output a 'getstarted.proto' protobuf file in ./")
+	allowExportsFlag = flag.BoolP("allowexports", "", false, "Allow exported functions not attached to the service struct in handlers.go")
 )
 
 var binName = filepath.Base(os.Args[0])
@@ -216,6 +217,8 @@ func parseInput() (*truss.Config, error) {
 	log.WithField("PB Package", cfg.PBPackage).Debug()
 	log.WithField("PB Path", cfg.PBPath).Debug()
 
+	// AllowExports
+	cfg.AllowExports = *allowExportsFlag
 	return &cfg, nil
 }
 
@@ -354,6 +357,7 @@ func generateCode(cfg *truss.Config, dt deftree.Deftree, sd *svcdef.Svcdef) (map
 		PreviousFiles: cfg.PrevGen,
 		Version:       Version,
 		VersionDate:   VersionDate,
+		AllowExports:  cfg.AllowExports,
 	}
 
 	genGokitFiles, err := gengokit.GenerateGokit(sd, conf)
@@ -532,7 +536,7 @@ Do you want to automatically run 'make' and rerun command:
 	return false
 }
 
-const trussImportPath = "github.com/TuneLab/truss"
+const trussImportPath = "github.com/eriktate/truss"
 
 // makeAndRunTruss installs truss by running make in trussImportPath.
 // It then passes through args to newly installed truss.

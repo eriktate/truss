@@ -6,7 +6,7 @@ import (
 
 	"context"
 
-	pb "github.com/TuneLab/truss/cmd/_integration-tests/middlewares/middlewarestest-service"
+	pb "github.com/eriktate/truss/cmd/_integration-tests/middlewares/middlewarestest-service"
 )
 
 func TestAlwaysWrapped(t *testing.T) {

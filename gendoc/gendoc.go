@@ -6,7 +6,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/TuneLab/truss/deftree"
+	"github.com/eriktate/truss/deftree"
 )
 
 func findServiceName(md *deftree.MicroserviceDefinition) string {

@@ -1,4 +1,4 @@
-# Truss [![Build Status](https://travis-ci.org/TuneLab/truss.svg?branch=master)](https://travis-ci.org/TuneLab/truss)
+# Truss [![Build Status](https://travis-ci.org/eriktate/truss.svg?branch=master)](https://travis-ci.org/eriktate/truss)
 
 Truss handles the painful parts of services, freeing you to focus on the
 business logic.
@@ -29,15 +29,15 @@ Otherwise [install from source.](https://github.com/google/protobuf)
 1. Install Truss with
 
 	```
-	go get -u -d github.com/TuneLab/truss
-	cd $GOPATH/src/github.com/TuneLab/truss
+	go get -u -d github.com/eriktate/truss
+	cd $GOPATH/src/github.com/eriktate/truss
 	make dependencies
 	make
 	```
 	On Windows, do the following instead:
 	```
-	go get -u -d github.com/TuneLab/truss
-	cd %GOPATH%/src/github.com/TuneLab/truss
+	go get -u -d github.com/eriktate/truss
+	cd %GOPATH%/src/github.com/eriktate/truss
 	wininstall.bat
 	```
 

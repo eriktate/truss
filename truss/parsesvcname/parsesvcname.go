@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/TuneLab/truss/svcdef"
-	"github.com/TuneLab/truss/truss/execprotoc"
+	"github.com/eriktate/truss/svcdef"
+	"github.com/eriktate/truss/truss/execprotoc"
 	"github.com/pkg/errors"
 )
 
