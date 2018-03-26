@@ -35,4 +35,10 @@ func init() {
 	if addr := os.Getenv("GRPC_ADDR"); addr != "" {
 		Config.GRPCAddr = addr
 	}
+	if key := os.Getenv("PRIVATE_KEY"); key != "" {
+		Config.PrivateKey = []byte(key)
+	}
+	if cert := os.Getenv("CERTIFICATE"); cert != "" {
+		Config.Certificate = []byte(cert)
+	}
 }

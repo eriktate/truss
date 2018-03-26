@@ -6,6 +6,7 @@
 package server
 
 import (
+	"crypto/tls"
 	"log"
 	"net"
 	"net/http"
@@ -13,6 +14,7 @@ import (
 
 	// 3d Party
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 
 	// This Service
 	pb "{{.PBImportPath -}}"
@@ -25,6 +27,9 @@ type Config struct {
 	HTTPAddr string
 	DebugAddr string
 	GRPCAddr string
+
+	PrivateKey []byte
+	Certificate []byte
 }
 
 func NewEndpoints() svc.Endpoints {
@@ -97,7 +102,23 @@ func Run(cfg Config) {
 		}
 
 		srv := svc.MakeGRPCServer(endpoints)
-		s := grpc.NewServer()
+		var s *grpc.Server
+
+		// we need to generate a server with credentials if we have them.
+		if cfg.PrivateKey != nil && cfg.Certificate != nil {
+			cert, err := tls.X509KeyPair(cfg.Certificate, cfg.PrivateKey)
+			if err != nil {
+				errc <- err
+				return
+			}
+
+			creds := credentials.NewServerTLSFromCert(&cert)
+
+			s = grpc.NewServer(grpc.Creds(creds))
+		} else {
+			s = grpc.NewServer()
+		}
+
 		pb.Register{{.Service.Name}}Server(s, srv)
 
 		errc <- s.Serve(ln)
