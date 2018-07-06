@@ -30,6 +30,7 @@ var (
 	verboseFlag    = flag.BoolP("verbose", "v", false, "Verbose output")
 	helpFlag       = flag.BoolP("help", "h", false, "Print usage")
 	getStartedFlag = flag.BoolP("getstarted", "", false, "Output a 'getstarted.proto' protobuf file in ./")
+	allowExports   = flag.BoolP("allowexports", "", false, "Allow exported functions not attached to the service struct in handlers.go")
 )
 
 var binName = filepath.Base(os.Args[0])
@@ -154,6 +155,7 @@ func parseInput() (*truss.Config, error) {
 	log.WithField("PB Package", cfg.PBPackage).Debug()
 	log.WithField("PB Path", cfg.PBPath).Debug()
 
+	cfg.AllowExports = *allowExports
 	if err := execprotoc.GeneratePBDotGo(cfg.DefPaths, cfg.GoPath, cfg.PBPath); err != nil {
 		return nil, errors.Wrap(err, "cannot create .pb.go files")
 	}
@@ -348,6 +350,7 @@ func generateCode(cfg *truss.Config, sd *svcdef.Svcdef) (map[string]io.Reader, e
 		PreviousFiles: cfg.PrevGen,
 		Version:       Version,
 		VersionDate:   VersionDate,
+		AllowExports:  cfg.AllowExports,
 	}
 
 	genGokitFiles, err := gengokit.GenerateGokit(sd, conf)
