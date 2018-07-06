@@ -87,7 +87,7 @@ func (h *handler) Render(alias string, data *gengokit.Data) (io.Reader, error) {
 	// Lowercase the service name before pruning because the templates all
 	// lowercase the service name when generating code to ensure Identifiers
 	// incorporating the service name remain unexported.
-	h.ast.Decls = h.mMap.pruneDecls(h.ast.Decls, strings.ToLower(data.Service.Name))
+	h.ast.Decls = h.mMap.pruneDecls(h.ast.Decls, strings.ToLower(data.Service.Name), data.AllowExports)
 	log.WithField("Service Methods", len(h.mMap)).Debug("After prune")
 
 	// create a new handlerData, and add all methods not defined in the previous file
@@ -148,7 +148,7 @@ func (h *handler) buffer() (*bytes.Buffer, error) {
 // In addition pruneDecls will update unremoved "Handler func"s input
 // paramaters and output results to by the types described in methodMap's
 // serviceMethod for that "Handler func".
-func (m methodMap) pruneDecls(decls []ast.Decl, svcName string) []ast.Decl {
+func (m methodMap) pruneDecls(decls []ast.Decl, svcName string, allowExports bool) []ast.Decl {
 	var newDecls []ast.Decl
 	for _, d := range decls {
 		switch x := d.(type) {
@@ -166,6 +166,10 @@ func (m methodMap) pruneDecls(decls []ast.Decl, svcName string) []ast.Decl {
 				updateResults(x, m[name])
 				newDecls = append(newDecls, x)
 				delete(m, name)
+			} else if allowExports {
+				if ok := isIgnored(x, m, svcName); ok == true {
+					newDecls = append(newDecls, x)
+				}
 			}
 		default:
 			newDecls = append(newDecls, d)
@@ -231,7 +235,7 @@ func isValidFunc(f *ast.FuncDecl, m methodMap, svcName string) bool {
 	rName := recvTypeToString(f.Recv)
 	if rName != svcName+"Service" {
 		log.WithField("Func", name).WithField("Receiver", rName).
-			Info("Func is exported with improper receiver; removing")
+			Info("Func is exported with improper receiver; removing unless overridden")
 		return false
 	}
 
@@ -239,6 +243,18 @@ func isValidFunc(f *ast.FuncDecl, m methodMap, svcName string) bool {
 		Debug("Method already exists in service definition; ignoring")
 
 	return true
+}
+
+func isIgnored(f *ast.FuncDecl, m methodMap, svcName string) bool {
+	name := f.Name.String()
+	rName := recvTypeToString(f.Recv)
+	if rName != svcName+"Service" {
+		log.WithField("Func", name).WithField("Receiver", rName).
+			Info("Exported func is not on service receiver; ignoring")
+		return true
+	}
+
+	return false
 }
 
 // recvTypeToString accepts an *ast.FuncDecl.Recv recv, and returns the

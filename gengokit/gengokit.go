@@ -19,10 +19,11 @@ type Renderable interface {
 }
 
 type Config struct {
-	GoPackage   string
-	PBPackage   string
-	Version     string
-	VersionDate string
+	GoPackage    string
+	PBPackage    string
+	Version      string
+	VersionDate  string
+	AllowExports bool
 
 	PreviousFiles map[string]io.Reader
 }
@@ -52,6 +53,8 @@ type Data struct {
 
 	Version     string
 	VersionDate string
+
+	AllowExports bool
 }
 
 func NewData(sd *svcdef.Svcdef, conf Config) (*Data, error) {

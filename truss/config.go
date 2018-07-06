@@ -18,4 +18,7 @@ type Config struct {
 	DefPaths []string
 	// The files of a previously generated service, may be nil
 	PrevGen map[string]io.Reader
+
+	// Toggles the removal of exported functions in handlers.go
+	AllowExports bool
 }
